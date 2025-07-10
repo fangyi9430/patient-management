@@ -19,12 +19,15 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.UUID;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.groups.Default;
 
 
 @RestController
 @RequestMapping("/patients")
+@Tag(name = "Patient", description = "API for managing Patients")
 public class PatientController {
   private final PatientService patientService;
   
@@ -33,6 +36,7 @@ public class PatientController {
   }
   
   @GetMapping
+  @Operation(summary = "get patients")
   public ResponseEntity<List<PatientResponseDTO>> getPatients() {
     List<PatientResponseDTO> patients = patientService.getPatient();
     return ResponseEntity.ok().body(patients);
@@ -40,6 +44,7 @@ public class PatientController {
   
   @PostMapping
   // @RequestBody, get body in json from http request and convert to java obj. here is prdto.
+  @Operation(summary = "create a new patient")
   public ResponseEntity<PatientResponseDTO> createPatient(
           @Validated({Default.class, CreatePatientValidationGroup.class}) // 这里两个组别都检查
           @RequestBody PatientRequestDTO patientRequestDTO) {
@@ -50,6 +55,7 @@ public class PatientController {
   
   // if a request ask to update
   @PutMapping("/{id}")
+  @Operation(summary = "update a patient")
   public ResponseEntity<PatientResponseDTO> updatePatient(@PathVariable UUID id,
       @Validated({Default.class}) @RequestBody PatientRequestDTO patientRequestDTO) {
     PatientResponseDTO patientResponseDTO = patientService.updatePatient(id, patientRequestDTO);
@@ -57,6 +63,7 @@ public class PatientController {
   }
   
   @DeleteMapping("/{id}")
+  @Operation(summary = "delete a patient")
   public ResponseEntity<Void> deletePatient(@PathVariable UUID id) {
     patientService.deletePatient(id);
     return ResponseEntity.noContent().build();
